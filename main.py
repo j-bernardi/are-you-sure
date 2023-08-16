@@ -46,12 +46,13 @@ if __name__ == "__main__":
 
         print(f"Returning\n{data_item}")
 
-        a = data_item[data_handler.RAW_ANSWER_KEY]
-        b = data_item[data_handler.QUERY_KEY]
-        c = data_item[data_handler.ARE_YOU_SURE_KEY]
+        a = data_item[data_handler.RAW_ANSWER_KEY] or "None"
+        b = data_item[data_handler.QUERY_KEY] or "None"
+        c = data_item[data_handler.ARE_YOU_SURE_KEY] or "None"
+
         table_data.append((a, b, c))
 
-        if b is None or c is None:
+        if (b is None) or (c is None):
             errors.append(data_i)
             continue
 
