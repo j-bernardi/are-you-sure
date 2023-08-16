@@ -149,7 +149,7 @@ class DataHandler:
     
     def _extract_output(self, input_ans):
 
-        pattern = r"My final answer is therefore that [a-z] [≈=] (\d+(\.\d+)?)"
+        pattern = r"My final answer is therefore that [a-z] [≈=] (-?\d+(\.\d+)?)"
         match = re.search(pattern, input_ans)
         if match:
             return match.group(1)
