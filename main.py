@@ -21,9 +21,9 @@ test_qas = [(x, eval(x)) for x in test_sums]
 
 if __name__ == "__main__":
 
-    CLEAN_DATA_LOAD = False
-    CLEAN_ANSWERS = False
-    EXPERIMENT_RANGE = (0, 20)
+    CLEAN_DATA_LOAD = True
+    CLEAN_ANSWERS = True
+    EXPERIMENT_RANGE = (0, 5)
 
     data_handler = DataHandler(os.path.join(os.getcwd(), "data"), clean=CLEAN_DATA_LOAD)
     data_handler.get_data(*EXPERIMENT_RANGE)
@@ -81,4 +81,4 @@ if __name__ == "__main__":
     for title, result_list in results.items():
         print(f"{title}: {len(result_list)}")
     
-    plotter(results, filename=os.path.join(os.getcwd(), f"n{len(table_data)}.png")
+    plotter(results, filename=os.path.join(os.getcwd(), f"n{len(table_data)}.png"))
