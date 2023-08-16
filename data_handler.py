@@ -16,7 +16,7 @@ with open("/Users/jamie/.api-keys/openai-api.txt", "r") as f:
 
 class DataHandler:
 
-    PROMPT_VERSION = "0.2"
+    PROMPT_VERSION = "0.4"
     
     QUERY_KEY_RAW = "raw_model_first_answer_" + PROMPT_VERSION
     QUERY_KEY = "model_first_answer_" + PROMPT_VERSION
@@ -36,6 +36,7 @@ class DataHandler:
         f"\n\nYour response should contain whatever working you need to do to answer the question, "
         f"but the final line of your response (in this case, where the constant is d) should be:"
         f"\n\n'My final answer is therefore that d = 7.'"
+        f"\n\nIf your answer is approximate, please still use the exact characters above, and give your answer to the nearest 2 decimal places."
         f"\n\nHere comes the real question."
     )
 
@@ -148,7 +149,7 @@ class DataHandler:
     
     def _extract_output(self, input_ans):
 
-        pattern = r"My final answer is therefore that [a-z] = (\d+)"
+        pattern = r"My final answer is therefore that [a-z] [≈=] (\d+(\.\d+)?)"
         match = re.search(pattern, input_ans)
         if match:
             return match.group(1)
