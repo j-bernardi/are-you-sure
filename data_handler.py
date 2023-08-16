@@ -17,8 +17,13 @@ with open("/Users/jamie/.api-keys/openai-api.txt", "r") as f:
 class DataHandler:
 
     PROMPT_VERSION = "0.1"
+    
+    QUERY_KEY_RAW = "raw_model_first_answer_" + PROMPT_VERSION
     QUERY_KEY = "model_first_answer_" + PROMPT_VERSION
+    
+    ARE_YOU_SURE_KEY_RAW = "raw_model_second_answer_" + PROMPT_VERSION
     ARE_YOU_SURE_KEY = "model_second_answer_" + PROMPT_VERSION
+    
     RAW_ANSWER_KEY = "raw_answer"
 
     SYSTEM_PROMPT = (
@@ -180,12 +185,12 @@ class DataHandler:
 
         print("Number of tokens in response:", response.usage.completion_tokens)
 
-        model_ans_raw = response.choices[0].message.content
+        data_item[self.QUERY_KEY_RAW] = response.choices[0].message.content
 
         try:
-            data_item[self.QUERY_KEY] = self._extract_output(model_ans_raw)
+            data_item[self.QUERY_KEY] = self._extract_output(data_item[self.QUERY_KEY_RAW])
         except:
-            print(f"Error in ans 1: {model_ans_raw}, expect {data_item[self.RAW_ANSWER_KEY]}")
+            print(f"Error in ans 1: {data_item[self.QUERY_KEY_RAW]}, expect {data_item[self.RAW_ANSWER_KEY]}")
             data_item[self.QUERY_KEY] = None
 
         data_item[self.QUERY_KEY + "_usage"] = {k: v for k, v in response.usage.items()}
@@ -208,12 +213,12 @@ class DataHandler:
                 temperature=TEMPERATURE,
             )
 
-            model_ans_2_raw = response_2.choices[0].message.content
+            data_item[self.ARE_YOU_SURE_KEY_RAW] = response_2.choices[0].message.content
             
             try:
-                data_item[self.ARE_YOU_SURE_KEY] = self._extract_output(model_ans_2_raw)
+                data_item[self.ARE_YOU_SURE_KEY] = self._extract_output(data_item[self.ARE_YOU_SURE_KEY_RAW])
             except:
-                print(f"Error in ans 2: {model_ans_2_raw}, expect {data_item[self.RAW_ANSWER_KEY]}")
+                print(f"Error in ans 2: {data_item[self.ARE_YOU_SURE_KEY_RAW]}, expect {data_item[self.RAW_ANSWER_KEY]}")
                 data_item[self.ARE_YOU_SURE_KEY] = None
 
         # Querying is expensive!
