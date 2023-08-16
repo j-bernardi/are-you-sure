@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def plotter(results):
+def plotter(results, filename=None):
 
     labels = list(results.keys())
     values = [len(results[key]) for key in labels]
@@ -20,3 +20,5 @@ def plotter(results):
                 ha='center', va='bottom')
 
     plt.show()
+    if filename is not None:
+        plt.savefig(filename)

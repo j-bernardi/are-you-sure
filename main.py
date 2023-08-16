@@ -16,6 +16,7 @@ test_qas = [(x, eval(x)) for x in test_sums]
 # May want to filter only for answers which are integers. 
 #   It seems a tough test / not indicative if the model is wrong both times.
 #
+# Also when not an integer, it seems to be giving an answer like "squiggly equals" rather than just equals.
 
 
 if __name__ == "__main__":
@@ -80,4 +81,4 @@ if __name__ == "__main__":
     for title, result_list in results.items():
         print(f"{title}: {len(result_list)}")
     
-    plotter(results)
+    plotter(results, filename=os.path.join(os.getcwd(), f"n{len(table_data)}.png")
