@@ -87,6 +87,8 @@ if __name__ == "__main__":
         results,
         filename=os.path.join(
             os.getcwd(),
+            "images",
+            f"{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}.png"
         ),
         display=False
     )
