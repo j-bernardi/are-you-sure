@@ -24,7 +24,7 @@ test_qas = [(x, eval(x)) for x in test_sums]
 if __name__ == "__main__":
 
     CLEAN_DATA_LOAD = False
-    CLEAN_ANSWERS = True
+    CLEAN_ANSWERS = False
     EXPERIMENT_RANGE = (0, 5)
 
     data_handler = DataHandler(os.path.join(os.getcwd(), "data"), clean=CLEAN_DATA_LOAD)
