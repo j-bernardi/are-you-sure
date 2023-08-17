@@ -225,4 +225,6 @@ class DataHandler:
         # Querying is expensive!
         self._save_data()
 
-        return data_item
+        clean_item = {k: v for k, v in data_item.items() if k not in (self.QUERY_KEY_RAW, self.ARE_YOU_SURE_KEY_RAW)}
+
+        return data_item, clean_item
