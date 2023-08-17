@@ -1,16 +1,8 @@
 import os
 import argparse
 
-from data_handler import DataHandler
+from data_handler import MathHandler, MultipleChoiceHandler
 from plotter import plotter
-
-test_sums = [
-    "5 + 10",
-    "10 - 2",
-    "10 * 6"
-]
-
-test_qas = [(x, eval(x)) for x in test_sums]
 
 
 def parse_arguments():
@@ -19,11 +11,23 @@ def parse_arguments():
 
     parser.add_argument(
         '--clean-data-load', action='store_true', help='Enable clean data load.')
-    parser.set_defaults(clean_data_load=False)
 
     parser.add_argument(
         '--clean-answers', action='store_true', help='Enable clean answers.')
-    parser.set_defaults(clean_answers=False)
+    
+    # Choices:
+    #  algebra__linear_1d
+    #  algebra__linear_2d
+    # derek-thomas--ScienceQA
+
+    parser.add_argument(
+        '--dataset', help='Enable clean answers.')
+    
+    parser.add_argument(
+        '--data-dir', required=True, help='Set data directory.')
+    
+    parser.add_argument(
+        '--type', required=True, choices=["math", "multi"], help='Set experiment type.')
 
     parser.add_argument(
         '--range',
@@ -45,7 +49,19 @@ if __name__ == "__main__":
     CLEAN_ANSWERS = args.clean_answers
     EXPERIMENT_RANGE = tuple(args.range)
 
-    data_handler = DataHandler(os.path.join(os.getcwd(), "data"), clean=CLEAN_DATA_LOAD)
+    if args.type == "math":
+        class_obj = MathHandler
+    elif args.type == "multi":
+        class_obj = MultipleChoiceHandler
+    else:
+        raise Exception(args.type)
+
+    data_handler = class_obj(
+        data_dir=args.data_dir,
+        data_config=args.dataset,
+        clean=CLEAN_DATA_LOAD
+    )
+
     data_handler.get_data(*EXPERIMENT_RANGE)
 
     results = {
@@ -106,7 +122,7 @@ if __name__ == "__main__":
         filename=os.path.join(
             os.getcwd(),
             "images",
-            f"{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}.png"
+            f"{args.type}-{args.dataset}-{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}.png"
         ),
         display=False
     )
