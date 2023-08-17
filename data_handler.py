@@ -125,8 +125,6 @@ class DataHandler:
         next_j = next_i
         while next_j < limit:
 
-            print(next_i, self.data.keys(), next_i in self.data)
-
             # Find the first item that's not in the dictionary already
             while next_i in self.data and next_i < limit:
                 next_i += 1
