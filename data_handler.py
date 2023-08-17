@@ -284,7 +284,7 @@ class MultipleChoiceHandler(DataHandler):
         f"\n\nHere comes the real question."
     )
 
-    PATTERN = r"My final answer is therefore (\d)"
+    PATTERN = r"Therefore, my final answer is (\d)"
 
     def __init__(self, data_dir, data_config, clean=False):
         super().__init__(data_dir, data_config, clean=clean)

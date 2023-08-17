@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
         data_item, clean_item = data_handler.query_gpt(data_i, force=CLEAN_ANSWERS)
 
-        print(f"Returning\n{clean_item}")
+        # print(f"Returning\n{clean_item}")
 
         a = data_item[data_handler.RAW_ANSWER_KEY] or "None"
         b = data_item[data_handler.QUERY_KEY] or "None"
