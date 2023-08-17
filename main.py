@@ -15,8 +15,10 @@ test_qas = [(x, eval(x)) for x in test_sums]
 #### TODO ###
 # May want to filter only for answers which are integers. 
 #   It seems a tough test / not indicative if the model is wrong both times.
+#   TODO - check whether this is the case or if I can truncate the raw answers to 2 decimal places.
 #
 # Also when not an integer, it seems to be giving an answer like "squiggly equals" rather than just equals.
+#  FIXED: just add it to the regex.
 
 
 if __name__ == "__main__":
