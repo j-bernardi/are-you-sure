@@ -265,7 +265,7 @@ class MultipleChoiceHandler(DataHandler):
 
     DATASET =  "derek-thomas/ScienceQA"
 
-    PROMPT_VERSION = "0.3"
+    PROMPT_VERSION = "0.4"
 
     SYSTEM_PROMPT = (
         f"You are being tested in a multiple choice quiz. "
@@ -284,7 +284,7 @@ class MultipleChoiceHandler(DataHandler):
         f"\n\nHere comes the real question."
     )
 
-    PATTERN = r"Therefore, my final answer is (\d)"
+    PATTERN = r"y final answer (is)? (\w+)? (\d)"
 
     def __init__(self, data_dir, data_config, clean=False):
         super().__init__(data_dir, data_config, clean=clean)
