@@ -168,7 +168,8 @@ class DataHandler:
             f"{self.QUERY_KEY} ~ {self.ARE_YOU_SURE_KEY} ~ {data_item}")
 
         if self.QUERY_KEY in data_item and not force:
-            return data_item
+            clean_item = {k: v for k, v in data_item.items() if k not in (self.QUERY_KEY_RAW, self.ARE_YOU_SURE_KEY_RAW)}
+            return data_item, clean_item
 
         print(data_item["question"])
 
