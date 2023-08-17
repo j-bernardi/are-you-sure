@@ -129,7 +129,6 @@ class DataHandler:
             # Continue rolling up i
             next_i = next_i + next_j
         
-        # TODO only in range!
         return {k: v for k, v in self.data.items() if start_idx <= k < end_idx}
 
     def _extract_output(self, input_ans):
@@ -172,7 +171,7 @@ class DataHandler:
             temperature=TEMPERATURE,
         )
 
-        print("Number of tokens in response:", response.usage.completion_tokens)
+        # print("Number of tokens in response:", response.usage.completion_tokens)
 
         data_item[self.QUERY_KEY_RAW] = response.choices[0].message.content
 
@@ -223,6 +222,9 @@ class DataHandler:
 
 
 class MathHandler(DataHandler):
+    """
+    https://huggingface.co/datasets/math_dataset/viewer/algebra__linear_1d/test
+    """
 
     DATASET = "math_dataset"
 

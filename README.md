@@ -19,4 +19,9 @@ This will set the EXPERIMENT_RANGE to (10, 50). This is a required argument.
 
 This will force a clean load of data and clean queries to GPT-3.5. If you don't provide any arguments, both values default to false.
 
+## Math equations
 ![Graph](images/0-100.png)
+
+
+## Multiple choice questions
+![Graph of other things](images/multi-derek-thomas--ScienceQA-0-100.png)
