@@ -4,8 +4,19 @@ When using ChatGPT, it'll sometimes give me an erroneous answer. I'll ask it "ar
 
 What happens if I ask it if it's sure when it gives a correct response? Let's find out.
 
+
+# Setup
+
+Go into main.py to set your api key file.
+
+To run the script:
+
 ```bash
-python main.py
+python your_script_name.py --range 10,50 [--clean-data-load] [--clean-answers]
 ```
 
-Requires a change to the script to get your api key, and to edit some settings.
+This will set the EXPERIMENT_RANGE to (10, 50). This is a required argument.
+
+This will force a clean load of data and clean queries to GPT-3.5. If you don't provide any arguments, both values default to false.
+
+![Graph](images/0-100.png)

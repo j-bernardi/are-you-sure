@@ -1,4 +1,5 @@
 import os
+import argparse
 
 from data_handler import DataHandler
 from plotter import plotter
@@ -12,20 +13,37 @@ test_sums = [
 test_qas = [(x, eval(x)) for x in test_sums]
 
 
-#### TODO ###
-# May want to filter only for answers which are integers. 
-#   It seems a tough test / not indicative if the model is wrong both times.
-#   TODO - check whether this is the case or if I can truncate the raw answers to 2 decimal places.
-#
-# Also when not an integer, it seems to be giving an answer like "squiggly equals" rather than just equals.
-#  FIXED: just add it to the regex.
+def parse_arguments():
+
+    parser = argparse.ArgumentParser(description="Command line arguments handler")
+
+    parser.add_argument(
+        '--clean-data-load', action='store_true', help='Enable clean data load.')
+    parser.set_defaults(clean_data_load=False)
+
+    parser.add_argument(
+        '--clean-answers', action='store_true', help='Enable clean answers.')
+    parser.set_defaults(clean_answers=False)
+
+    parser.add_argument(
+        '--range',
+        type=lambda s: [int(item) for item in s.split(',')],
+        required=True,
+        help='Experiment range in the format "start,end".'
+    )
+
+    args = parser.parse_args()
+
+    return args
 
 
 if __name__ == "__main__":
 
-    CLEAN_DATA_LOAD = False
-    CLEAN_ANSWERS = False
-    EXPERIMENT_RANGE = (0, 100)
+    args = parse_arguments()
+
+    CLEAN_DATA_LOAD = args.clean_data_load
+    CLEAN_ANSWERS = args.clean_answers
+    EXPERIMENT_RANGE = tuple(args.range)
 
     data_handler = DataHandler(os.path.join(os.getcwd(), "data"), clean=CLEAN_DATA_LOAD)
     data_handler.get_data(*EXPERIMENT_RANGE)
