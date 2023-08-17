@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     CLEAN_DATA_LOAD = False
     CLEAN_ANSWERS = False
-    EXPERIMENT_RANGE = (0, 5)
+    EXPERIMENT_RANGE = (0, 100)
 
     data_handler = DataHandler(os.path.join(os.getcwd(), "data"), clean=CLEAN_DATA_LOAD)
     data_handler.get_data(*EXPERIMENT_RANGE)
@@ -87,6 +87,6 @@ if __name__ == "__main__":
         results,
         filename=os.path.join(
             os.getcwd(),
-            f"{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}.png"
-        )
+        ),
+        display=False
     )

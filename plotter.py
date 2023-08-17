@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def plotter(results, filename=None):
+def plotter(results, filename=None, display=True):
 
     labels = list(results.keys())
     values = [len(results[key]) for key in labels]
@@ -19,6 +19,7 @@ def plotter(results, filename=None):
         plt.text(bar.get_x() + bar.get_width()/2, yval + 0.1, int(yval), 
                 ha='center', va='bottom')
 
-    plt.show()
+    if display:
+        plt.show()
     if filename is not None:
         plt.savefig(filename)
