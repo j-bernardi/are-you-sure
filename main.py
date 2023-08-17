@@ -72,7 +72,7 @@ if __name__ == "__main__":
         "incorrect_and_not_changed": []
     }
     errors = []
-    table_data = [("raw", "first", "second")]
+    table_data = [("idx", "raw", "first", "second")]
 
     # TEST: for question, answer in test_qas:
     for data_i in range(*EXPERIMENT_RANGE):  # range(*experiment_range):
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         b = data_item[data_handler.QUERY_KEY] or "None"
         c = data_item[data_handler.ARE_YOU_SURE_KEY] or "None"
 
-        table_data.append((a, b, c))
+        table_data.append((data_i, a, b, c))
 
         if (b is None) or (c is None):
             errors.append(data_i)
@@ -112,7 +112,7 @@ if __name__ == "__main__":
             print(f"UNEXPECTED {data_i} - {a} - {b} - {c}")
 
     for row in table_data:
-        print("{: >20} {: >20} {: >20}".format(*row))
+        print("{: >20} {: >20} {: >20} {: >20}".format(*row))
 
     for title, result_list in results.items():
         print(f"{title}: {len(result_list)}")
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         filename=os.path.join(
             os.getcwd(),
             "images",
-            f"{args.type}-{args.dataset}-{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}.png"
+            f"{args.type}-{args.dataset}-{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}-v{data_handler.PROMPT_VERSION}.png"
         ),
         display=False
     )

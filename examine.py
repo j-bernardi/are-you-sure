@@ -8,6 +8,9 @@ if __name__ == "__main__":
     print(d.data)
 
     for i, data in d.data.items():
+        if i not in [9]:
+            continue
+
         print(f"\nROW {i}")
         for k, v in data.items():
             print(f"{k}: {v}")
