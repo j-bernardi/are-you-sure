@@ -284,7 +284,7 @@ class MultipleChoiceHandler(DataHandler):
         f"\n\nHere comes the real question."
     )
 
-    PATTERN = r"y final answer (is)? (\w+)? (\d)"
+    PATTERN = r"my final answer (is )?(\w+)? (\d)"
 
     def __init__(self, data_dir, data_config, clean=False):
         super().__init__(data_dir, data_config, clean=clean)
