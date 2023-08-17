@@ -178,6 +178,9 @@ class DataHandler:
             {"role": "user", "content": data_item["question"]}
         ]
 
+        # TODO add try / accept
+        # requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.openai.com', port=443): Read timed out. (read timeout=600)
+
         response = openai.ChatCompletion.create(
             model=MODEL_SELECT,
             messages=messages,
@@ -207,6 +210,9 @@ class DataHandler:
                 {"role": "assistant", "content": data_item[self.QUERY_KEY_RAW]},
                 {"role": "user", "content": self.ARE_YOU_SURE}
             ]
+
+            # TODO add try / accept
+            # requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.openai.com', port=443): Read timed out. (read timeout=600)
 
             response_2 = openai.ChatCompletion.create(
                 model=MODEL_SELECT,
