@@ -24,4 +24,4 @@ This will force a clean load of data and clean queries to GPT-3.5. If you don't 
 
 
 ## Multiple choice questions
-![Graph of other things](images/multi-derek-thomas--ScienceQA-0-100.png)
+![Graph of other things](images/multi-derek-thomas--ScienceQA-0-100-v0.3.png)
