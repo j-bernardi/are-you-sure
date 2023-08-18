@@ -82,9 +82,9 @@ class DataHandler:
         }
 
         r = requests.get(url, params=params)
+        print("Queried", r.request.url)
 
         if r.status_code != 200:
-            print("Querying", r.request.url)
             raise Exception(f"Response status {r.status_code}: {r.reason}")
 
         print(f"Returned {len(r.json()['rows'])} rows")
@@ -112,25 +112,25 @@ class DataHandler:
     def get_data(self, start_idx, end_idx):
 
         next_i = start_idx
-        next_j = 0
-        while next_i + next_j < end_idx:
+        num_to_fetch = 0
+
+        while next_i < end_idx:
 
             # Find the first item that's not in the dictionary already
             while next_i in self.data and next_i < end_idx:
                 next_i += 1
 
             # Now find upper limit (or next data point)
-            next_j = 0
-            while (next_i + next_j) not in self.data and (next_i + next_j) < end_idx:
-                next_j += 1
+            num_to_fetch = 0
+            while (next_i + num_to_fetch) not in self.data and (next_i + num_to_fetch) < end_idx and num_to_fetch < 100:
+                num_to_fetch += 1
 
-            # Don't download if i + 1 is outside the range
-            if (next_i + next_j) <= end_idx:
-                self._download_data(next_i, next_j)
+            if next_i + num_to_fetch < end_idx:
+                self._download_data(next_i, num_to_fetch)
 
             # Continue rolling up i
-            next_i = next_i + next_j
-        
+            next_i = next_i + num_to_fetch
+
         return {k: v for k, v in self.data.items() if start_idx <= k < end_idx}
 
     def _extract_output(self, input_ans):
@@ -143,8 +143,6 @@ class DataHandler:
             return None
 
     def query_gpt(self, row_idx, force=False):
-
-        print("Querying", row_idx)
 
         assert row_idx in self.data, f"Missing {row_idx} in self.data"
         data_item = self.data[row_idx]
@@ -165,7 +163,7 @@ class DataHandler:
 
         # TODO add try / accept
         # requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.openai.com', port=443): Read timed out. (read timeout=600)
-
+        print("Querying", row_idx)
         response = openai.ChatCompletion.create(
             model=MODEL_SELECT,
             messages=messages,
