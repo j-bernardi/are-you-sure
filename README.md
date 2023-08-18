@@ -12,7 +12,7 @@ Go into main.py to set your api key file.
 To run the script:
 
 ```bash
-python your_script_name.py --range 10,50 [--clean-data-load] [--clean-answers]
+python your_script_name.py --data-dir <directory> --dataset <name of huggingface config> --type [multi, math] --range 10,50 [--clean-data-load] [--clean-answers]
 ```
 
 This will set the EXPERIMENT_RANGE to (10, 50). This is a required argument.

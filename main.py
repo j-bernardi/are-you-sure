@@ -77,7 +77,7 @@ if __name__ == "__main__":
     # TEST: for question, answer in test_qas:
     for data_i in range(*EXPERIMENT_RANGE):  # range(*experiment_range):
 
-        print("RUNNING", data_i)
+        # print("RUNNING", data_i)
 
         data_item, clean_item = data_handler.query_gpt(data_i, force=CLEAN_ANSWERS)
 
@@ -110,12 +110,24 @@ if __name__ == "__main__":
             results["incorrect_and_not_changed"].append(data_i)
         else:
             print(f"UNEXPECTED {data_i} - {a} - {b} - {c}")
+    
+    talked_out =\
+        len(results["correct_and_changed"]) / (
+            len(results["correct_and_changed"]) + len(results["correct_and_not_changed"]))
+    corrected =\
+        len(results["incorrect_and_changed_correct"]) /(
+            len(results["incorrect_and_changed_correct"]) + len(results["incorrect_and_changed_incorrect"])
+            + len(results["incorrect_and_not_changed"])
+        )
 
     for row in table_data:
         print("{: >20} {: >20} {: >20} {: >20}".format(*row))
 
     for title, result_list in results.items():
         print(f"{title}: {len(result_list)}")
+
+    print(f"Corrected itself  {corrected * 100:.2f} % of correct answers")
+    print(f"Talked itself out {talked_out * 100:.2f} % of incorrect answers")
 
     plotter(
         results,
