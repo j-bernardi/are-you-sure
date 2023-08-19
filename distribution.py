@@ -2,78 +2,35 @@ import os
 import openai
 import pickle
 import requests
-import argparse
 
-from data_handler import MathHandler, MultipleChoiceHandler
+from data_handler import MultipleChoiceHandler
 from plotter import plotter
-
-"""
-def parse_arguments():
-
-    parser = argparse.ArgumentParser(description="Command line arguments handler")
-
-    parser.add_argument(
-        '--clean-data-load', action='store_true', help='Enable clean data load.')
-
-    parser.add_argument(
-        '--clean-answers', action='store_true', help='Enable clean answers.')
-    
-    # Choices:
-    #  algebra__linear_1d
-    #  algebra__linear_2d
-    # derek-thomas--ScienceQA
-
-    parser.add_argument(
-        '--dataset', help='Enable clean answers.')
-    
-    parser.add_argument(
-        '--data-dir', required=True, help='Set data directory.')
-    
-    parser.add_argument(
-        '--type', required=True, choices=["math", "multi"], help='Set experiment type.')
-
-    parser.add_argument(
-        '--range',
-        type=lambda s: [int(item) for item in s.split(',')],
-        required=True,
-        help='Experiment range in the format "start,end".'
-    )
-
-    args = parser.parse_args()
-
-    return args
-"""
 
 
 if __name__ == "__main__":
 
-    # args = parse_arguments()
-    # CLEAN_DATA_LOAD = args.clean_data_load
-    # CLEAN_ANSWERS = args.clean_answers
-    # EXPERIMENT_RANGE = tuple(args.range)
-    # 
-    # if args.type == "math":
-    #     class_obj = MathHandler
-    # elif args.type == "multi":  
-    # else:
-    #     raise Exception(args.type)
+    TEMPERATURE = 1.  # OpenAI default = 1.
+    DATA_DIR = f"distribution_data_t{TEMPERATURE}"
+    EXPERIMENT_RANGE = (170, 175)
 
     data_handler = MultipleChoiceHandler(
-        data_dir="distribution_data",
+        data_dir=DATA_DIR,
         data_config="derek-thomas--ScienceQA",
         clean=False,
+        temperature=TEMPERATURE,
     )
-
-    EXPERIMENT_RANGE = (60, 65)
 
     data_handler.get_data(*EXPERIMENT_RANGE)
 
-    if os.path.exists("distribution_data/results.p"):
-        with open("distribution_data/results.p", "rb") as f:
+    if os.path.exists(f"{DATA_DIR}/results.p"):
+        with open(f"{DATA_DIR}/results.p", "rb") as f:
             results = pickle.load(f)
     else:
-        results = {
-            i: {
+        results = {}
+
+    for i in range(*EXPERIMENT_RANGE):
+        if i not in results:
+            results[i] = {
                 "correct_and_changed": [],
                 "correct_and_not_changed": [],
                 "incorrect_and_changed_correct": [],
@@ -81,8 +38,7 @@ if __name__ == "__main__":
                 "incorrect_and_not_changed": [],
                 "error": []
             }
-            for i in range(*EXPERIMENT_RANGE)
-        }
+
     # table_data = [("idx", "raw", "first", "second")]
 
     error_count = 0
@@ -135,7 +91,7 @@ if __name__ == "__main__":
             else:
                 print(f"UNEXPECTED {data_i} - {a} - {b} - {c}")
             
-            with open("distribution_data/results.p", "wb") as f:
+            with open(f"{DATA_DIR}/results.p", "wb") as f:
                 pickle.dump(results, f)
 
     """
@@ -149,26 +105,38 @@ if __name__ == "__main__":
 
     for i, result_dict_i in results.items():
         print(f"\nDATA{i}\n")
-        talked_out =\
-            len(result_dict_i["correct_and_changed"]) / (
-                len(result_dict_i["correct_and_changed"]) + len(result_dict_i["correct_and_not_changed"]))
-        corrected =\
-            len(result_dict_i["incorrect_and_changed_correct"]) /(
+
+        talkedout_denom = (
+            len(result_dict_i["correct_and_changed"]) + len(result_dict_i["correct_and_not_changed"]))
+        if talkedout_denom:
+            talked_out =\
+                len(result_dict_i["correct_and_changed"]) / talkedout_denom
+        else:
+            talked_out = 0
+
+        corrected_denom = (
                 len(result_dict_i["incorrect_and_changed_correct"]) + len(result_dict_i["incorrect_and_changed_incorrect"])
                 + len(result_dict_i["incorrect_and_not_changed"])
-            )
+        )
+
+        if corrected_denom:
+            corrected =\
+                len(result_dict_i["incorrect_and_changed_correct"]) / corrected_denom
+        else:
+            corrected = 0
+
         for title, result_list in result_dict_i.items():
             print(f"{title}: {len(result_list)}")
 
-        print(f"Corrected itself  {corrected * 100:.2f} % of correct answers")
-        print(f"Talked itself out {talked_out * 100:.2f} % of incorrect answers")
+        print(f"Corrected itself  {corrected * 100:.2f} % of incorrect answers")
+        print(f"Talked itself out {talked_out * 100:.2f} % of correct answers")
 
         plotter(
             results,
             filename=os.path.join(
                 os.getcwd(),
                 "images_distribution",
-                f"{i}-multi-distribution-v{data_handler.PROMPT_VERSION}.png"
+                f"{i}-multi-distribution-v{data_handler.PROMPT_VERSION}-t={TEMPERATURE}.png"
             ),
             display=False
         )
