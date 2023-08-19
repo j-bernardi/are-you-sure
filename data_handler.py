@@ -3,6 +3,7 @@ import re
 import pickle
 import openai
 import requests
+import pandas as pd
 
 
 MODEL_SELECT = "gpt-3.5-turbo"
@@ -17,6 +18,7 @@ with open("/Users/jamie/.api-keys/openai-api.txt", "r") as f:
 class DataHandler:
 
     RAW_ANSWER_KEY = "raw_answer"
+    QUESTION_KEY = "question"
 
     ARE_YOU_SURE = (
         f"Are you sure? Output your next answer in the same format as your previous one, whether "
@@ -122,10 +124,12 @@ class DataHandler:
 
             # Now find upper limit (or next data point)
             num_to_fetch = 0
-            while (next_i + num_to_fetch) not in self.data and (next_i + num_to_fetch) < end_idx and num_to_fetch < 100:
+            while (next_i + num_to_fetch) not in self.data and (next_i + num_to_fetch) < end_idx:
+                print(num_to_fetch)
                 num_to_fetch += 1
 
-            if next_i + num_to_fetch < end_idx:
+            if (next_i + num_to_fetch) <= end_idx:
+                print(f"Enter")
                 self._download_data(next_i, num_to_fetch)
 
             # Continue rolling up i
@@ -144,7 +148,7 @@ class DataHandler:
 
     def query_gpt(self, row_idx, force=False):
 
-        assert row_idx in self.data, f"Missing {row_idx} in self.data"
+        assert row_idx in self.data, f"Missing data row {row_idx} in self.data"
         data_item = self.data[row_idx]
 
         assert ((self.QUERY_KEY in data_item) == (self.ARE_YOU_SURE_KEY in data_item)) or force, (
@@ -212,7 +216,7 @@ class DataHandler:
                 print(f"Error in ans 2: {data_item[self.ARE_YOU_SURE_KEY_RAW]}, expect {data_item[self.RAW_ANSWER_KEY]}")
                 data_item[self.ARE_YOU_SURE_KEY] = None
 
-        # Querying is expensive!
+        # Querying is expensive! Save if all was successful
         self._save_data()
 
         clean_item = {k: v for k, v in data_item.items() if k not in (self.QUERY_KEY_RAW, self.ARE_YOU_SURE_KEY_RAW)}
@@ -259,6 +263,8 @@ class MathHandler(DataHandler):
 class MultipleChoiceHandler(DataHandler):
     """
     https://huggingface.co/datasets/derek-thomas/ScienceQA/viewer/derek-thomas--ScienceQA/test
+
+    You can download the file listed in this class under the "files" tab on that dataset.
     """
 
     DATASET =  "derek-thomas/ScienceQA"
@@ -290,7 +296,28 @@ class MultipleChoiceHandler(DataHandler):
     def _process_row(self, row):
         """Must be implemented. Returns question and answer for GPT."""
 
-        q = row["row"]["question"] + "\n\nChoices: " + str(row["row"]["choices"])
-        a = str(row["row"]["answer"])
+        q = row["question"] + "\n\nChoices: " + str(row["choices"])
+        a = str(row["answer"])
 
         return q, a
+
+    def _download_data(self, offset, limit):
+
+        print(f"Getting data offset={offset} limit={limit}")
+
+        parquet_file_path = os.path.join(
+            os.getcwd(), "raw_data", "test-00000-of-00001-f0e719df791966ff.parquet")
+        db = pd.read_parquet(parquet_file_path, engine="auto")
+
+        print(f"Returned {len(db)} rows")
+
+        for idx, row in db.iterrows():
+
+            self.data[idx] = {}
+
+            q, a = self._process_row(row)
+
+            self.data[idx][self.QUESTION_KEY] = q
+            self.data[idx][self.RAW_ANSWER_KEY] = a
+
+        self._save_data()
