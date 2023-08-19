@@ -2,4 +2,4 @@ __pycache__
 *.p
 images/
 raw_data
-distribution_images
+images_distribution
