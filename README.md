@@ -24,4 +24,18 @@ This will force a clean load of data and clean queries to GPT-3.5. If you don't 
 
 
 ## Multiple choice questions
-![Graph of other things](images/multi-derek-thomas--ScienceQA-0-50-v0.4.png)
+![Graph of other things](images/multi-derek-thomas--ScienceQA-0-1000-v0.4.png)
+
+Generated with code:
+
+```bash
+python /Users/jamie/code/are-you-sure/main.py --dataset derek-thomas--ScienceQA --data-dir multi_data --type multi --range 0,1000
+```
+
+# Temperature checks
+
+Generated with code:
+
+```bash
+python /Users/jamie/code/are-you-sure/distribution.py
+```

@@ -132,7 +132,7 @@ if __name__ == "__main__":
         print(f"Talked itself out {talked_out * 100:.2f} % of correct answers")
 
         plotter(
-            results,
+            result_dict_i,
             filename=os.path.join(
                 os.getcwd(),
                 "images_distribution",
