@@ -1,4 +1,6 @@
 import os
+import openai
+import requests
 import argparse
 
 from data_handler import MathHandler, MultipleChoiceHandler
@@ -73,13 +75,20 @@ if __name__ == "__main__":
     }
     errors = []
     table_data = [("idx", "raw", "first", "second")]
+    error_idcs = {}
 
     # TEST: for question, answer in test_qas:
     for data_i in range(*EXPERIMENT_RANGE):  # range(*experiment_range):
 
-        # print("RUNNING", data_i)
-
-        data_item, clean_item = data_handler.query_gpt(data_i, force=CLEAN_ANSWERS)
+        # Try except to skip timeouts
+        try:
+            data_item, clean_item = data_handler.query_gpt(data_i, force=CLEAN_ANSWERS)
+        except requests.exceptions.ReadTimeout as rte:
+            error_idcs[data_i] = f"{rte}"
+            continue
+        except openai.error.Timeout as rte:
+            error_idcs[data_i] = f"{rte}"
+            continue
 
         # print(f"Returning\n{clean_item}")
 
@@ -119,6 +128,10 @@ if __name__ == "__main__":
             len(results["incorrect_and_changed_correct"]) + len(results["incorrect_and_changed_incorrect"])
             + len(results["incorrect_and_not_changed"])
         )
+
+    print("Exceptions")
+    for k, v in error_idcs.items():
+        print(f"{k}: {v}")
 
     for row in table_data:
         print("{: >20} {: >20} {: >20} {: >20}".format(*row))
