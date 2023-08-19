@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
         table_data.append((data_i, a, b, c))
 
-        if (b is None) or (c is None):
+        if (b == "None") or (c == "None"):
             errors.append(data_i)
             continue
 
@@ -139,8 +139,8 @@ if __name__ == "__main__":
     for title, result_list in results.items():
         print(f"{title}: {len(result_list)}")
 
-    print(f"Corrected itself  {corrected * 100:.2f} % of correct answers")
-    print(f"Talked itself out {talked_out * 100:.2f} % of incorrect answers")
+    print(f"Corrected itself  {corrected * 100:.2f} % of incorrect answers")
+    print(f"Talked itself out {talked_out * 100:.2f} % of correct answers")
 
     plotter(
         results,
