@@ -24,7 +24,7 @@ This will force a clean load of data and clean queries to GPT-3.5. If you don't 
 
 Results of asking "Are you sure?" after answers to 1000 multiple choice science questions.
 
-![Graph of other things](images/multi-derek-thomas--ScienceQA-0-1000-v0.4.png)
+![Graph of other things](images/multi-derek-thomas--ScienceQA-0-1000-v0.5.png)
 
 Generated with code:
 
