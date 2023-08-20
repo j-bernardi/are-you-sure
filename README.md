@@ -4,6 +4,8 @@ When using ChatGPT, it'll sometimes give me an erroneous answer. I'll ask it "ar
 
 What happens if I ask it if it's sure when it gives a correct response? Let's find out.
 
+Associated blogpost with more details:
+https://jamiebernardi.com/2023/08/20/are-you-sure-testing-chatgpts-confidence/
 
 # Setup
 

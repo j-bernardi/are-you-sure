@@ -106,11 +106,11 @@ if __name__ == "__main__":
     for i, result_dict_i in results.items():
         print(f"\nDATA{i}\n")
 
-        talkedout_denom = (
+        talked_out_denom = (
             len(result_dict_i["correct_and_changed"]) + len(result_dict_i["correct_and_not_changed"]))
-        if talkedout_denom:
+        if talked_out_denom:
             talked_out =\
-                len(result_dict_i["correct_and_changed"]) / talkedout_denom
+                len(result_dict_i["correct_and_changed"]) / talked_out_denom
         else:
             talked_out = 0
 

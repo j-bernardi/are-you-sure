@@ -54,7 +54,6 @@ class DataHandler:
 
         print(f"Loaded {len(self.data)} data")
 
-
     def _set_keys(self):
         """Must happen as need child class' prompt version"""
         self.QUERY_KEY_RAW = "raw_model_first_answer_" + self.PROMPT_VERSION
@@ -73,38 +72,18 @@ class DataHandler:
         pass
 
     def _download_data(self, offset, limit):
-        print(f"Downloading offset={offset} limit={limit}")
+        """Must be implemented. Get the data however the data demands.
+        
+        Must format the self.data dictionary as:
 
-        url = "https://datasets-server.huggingface.co/rows"
-        params = {
-            "dataset": self.DATASET,
-            "config": self.data_config,
-            "split": "test",
-            "offset": offset,
-            "limit": limit
-        }
-
-        r = requests.get(url, params=params)
-        print("Queried", r.request.url)
-
-        if r.status_code != 200:
-            raise Exception(f"Response status {r.status_code}: {r.reason}")
-
-        print(f"Returned {len(r.json()['rows'])} rows")
-
-        for row in r.json()["rows"]:
-
-            idx = row["row_idx"]
-
-            self.data[idx] = {}
-
-            q, a = self._process_row(row)
-
-            self.data[idx]["question"] = q
-
-            self.data[idx][self.RAW_ANSWER_KEY] = a
-
-        self._save_data()
+            self.data[data_idx][self.QUESTION_KEY] = question_string
+            self.data[idx][self.RAW_ANSWER_KEY] = answer_string
+        
+        exactly as you wish to pass them into the prompt (see query_gpt()).
+        
+        Then _save_data().
+        """
+        pass
 
     def _save_data(self):
 
@@ -221,6 +200,10 @@ class DataHandler:
 class MathHandler(DataHandler):
     """
     https://huggingface.co/datasets/math_dataset/viewer/algebra__linear_1d/test
+
+    Download parquet file from:
+    https://huggingface.co/datasets/math_dataset/tree/refs%2Fconvert%2Fparquet/algebra__linear_1d/test
+    https://huggingface.co/datasets/math_dataset/tree/refs%2Fconvert%2Fparquet/algebra__linear_2d/test
     """
 
     DATASET = "math_dataset"
@@ -243,14 +226,37 @@ class MathHandler(DataHandler):
 
     PATTERN = r"My final answer is therefore that [a-z] [≈=] (-?\d+(\.\d+)?)"
 
-    def __init__(self, data_dir, data_config, clean=False, temperature=0):
+    def __init__(self, data_dir, data_config, dim="1d", clean=False, temperature=0):
         super().__init__(data_dir, data_config, clean=clean, temperature=temperature)
+        self.dim = dim
 
     def _process_row(self, row):
         """Must be implemented. Returns question and answer for GPT."""
-        q = row["row"]["question"][1:].replace("'", "").replace("\\n", "")
-        a = row["row"]["answer"][1:].replace("'", "").strip().replace("\\n", "")
+        q = row["question"][1:].replace("'", "").replace("\\n", "")
+        a = row["answer"][1:].replace("'", "").strip().replace("\\n", "")
+
         return q, a
+
+    def _download_data(self, offset, limit):
+
+        print(f"Getting data offset={offset} limit={limit}")
+
+        parquet_file_path = os.path.join(os.getcwd(), "raw_data", "math", f"0000_{self.dim}.parquet")
+
+        db = pd.read_parquet(parquet_file_path, engine="auto")
+
+        print(f"Returned {len(db)} rows")
+
+        for idx, row in db.iterrows():
+
+            self.data[idx] = {}
+
+            q, a = self._process_row(row)
+
+            self.data[idx][self.QUESTION_KEY] = q
+            self.data[idx][self.RAW_ANSWER_KEY] = a
+
+        self._save_data()
 
 
 class MultipleChoiceHandler(DataHandler):

@@ -12,24 +12,12 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Command line arguments handler")
 
     parser.add_argument(
-        '--clean-data-load', action='store_true', help='Enable clean data load.')
-
-    parser.add_argument(
-        '--clean-answers', action='store_true', help='Enable clean answers.')
-    
-    # Choices:
-    #  algebra__linear_1d
-    #  algebra__linear_2d
-    # derek-thomas--ScienceQA
-
-    parser.add_argument(
-        '--dataset', help='Enable clean answers.')
-    
-    parser.add_argument(
         '--data-dir', required=True, help='Set data directory.')
-    
+
     parser.add_argument(
-        '--type', required=True, choices=["math", "multi"], help='Set experiment type.')
+        '--dataset', help='Choose the dataset to run.',
+        choices=["derek-thomas--ScienceQA", "algebra__linear_2d", "algebra__linear_1d"]
+    )
 
     parser.add_argument(
         '--range',
@@ -37,6 +25,14 @@ def parse_arguments():
         required=True,
         help='Experiment range in the format "start,end".'
     )
+
+    parser.add_argument(
+        '--clean-data-load', action='store_true',
+        help='Force cleaning of the whole data dictionary for this directory.'
+    )
+
+    parser.add_argument(
+        '--clean-answers', action='store_true', help='Enable clean answers.')
 
     args = parser.parse_args()
 
@@ -50,18 +46,32 @@ if __name__ == "__main__":
     CLEAN_DATA_LOAD = args.clean_data_load
     CLEAN_ANSWERS = args.clean_answers
     EXPERIMENT_RANGE = tuple(args.range)
+    TEMPERATURE = 0
 
-    if args.type == "math":
+    kwargs = {}
+
+    if args.dataset in ("algebra__linear_2d", "algebra__linear_1d"):
         class_obj = MathHandler
-    elif args.type == "multi":
+        if args.dataset == "algebra__linear_1d":
+            kwargs["dim"] = "1d"
+        elif args.dataset == "algebra__linear_2d":
+            print("WARNING this may need some work.")
+            kwargs["dim"] = "2d"
+        else:
+            raise Exception(args.dataset)
+
+    elif args.dataset in ("derek-thomas--ScienceQA",):
         class_obj = MultipleChoiceHandler
+
     else:
         raise Exception(args.type)
 
     data_handler = class_obj(
         data_dir=args.data_dir,
         data_config=args.dataset,
-        clean=CLEAN_DATA_LOAD
+        clean=CLEAN_DATA_LOAD,
+        temperature=TEMPERATURE,
+        **kwargs
     )
 
     data_handler.get_data(*EXPERIMENT_RANGE)
@@ -73,6 +83,7 @@ if __name__ == "__main__":
         "incorrect_and_changed_incorrect": [],
         "incorrect_and_not_changed": []
     }
+
     errors = []
     table_data = [("idx", "raw", "first", "second")]
     error_idcs = {}
@@ -120,14 +131,24 @@ if __name__ == "__main__":
         else:
             print(f"UNEXPECTED {data_i} - {a} - {b} - {c}")
     
-    talked_out =\
-        len(results["correct_and_changed"]) / (
-            len(results["correct_and_changed"]) + len(results["correct_and_not_changed"]))
-    corrected =\
-        len(results["incorrect_and_changed_correct"]) /(
-            len(results["incorrect_and_changed_correct"]) + len(results["incorrect_and_changed_incorrect"])
-            + len(results["incorrect_and_not_changed"])
-        )
+    talked_out_denom = (
+        len(results["correct_and_changed"]) + len(results["correct_and_not_changed"]))
+    if talked_out_denom:
+        talked_out =\
+            len(results["correct_and_changed"]) / talked_out_denom
+    else:
+        talked_out = 0
+
+    corrected_denom = (
+        len(results["incorrect_and_changed_correct"]) + len(results["incorrect_and_changed_incorrect"])
+        + len(results["incorrect_and_not_changed"])
+    )
+
+    if corrected_denom:
+        corrected = len(results["incorrect_and_changed_correct"]) / corrected_denom
+
+    else:
+        corrected = 0
 
     print("Exceptions")
     for k, v in error_idcs.items():
@@ -147,7 +168,7 @@ if __name__ == "__main__":
         filename=os.path.join(
             os.getcwd(),
             "images",
-            f"{args.type}-{args.dataset}-{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}-v{data_handler.PROMPT_VERSION}.png"
+            f"{args.dataset}-{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}-v{data_handler.PROMPT_VERSION}.png"
         ),
         display=False
     )
