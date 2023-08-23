@@ -57,3 +57,10 @@ I also asked some 1d linear algebra questions. I may return to this to see if th
 
 ![Graph](images/0-100.png)
 
+# GPT-4
+
+This effect seems much diminished with GPT-4.
+
+![GPT-4 talkout](local_multi_filter_image_gpt-4/derek-thomas--ScienceQA-0-400-v0.5.png)
+
+It looks 50-50 on whether the model is too bullish when it was wrong, but it's difficult to distinguish over-confidence from just being mistaken about the answer (twice).

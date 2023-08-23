@@ -2,8 +2,8 @@ import pickle
 
 if __name__ == "__main__":
 
-    DATA_DIR = "local_multi_filter_image"
-    IDCS = range(0, 30)
+    DATA_DIR = "local_multi_filter_image_gpt-4"
+    IDCS = range(100, 130)
 
     with open(f"{DATA_DIR}/data.p", "rb") as f:
         all_data = pickle.load(f)
