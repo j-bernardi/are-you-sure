@@ -38,11 +38,11 @@ python /Users/jamie/code/are-you-sure/main.py --dataset derek-thomas--ScienceQA 
 
 At temperature = 1, the variance in answers was still quite low, at first glance. Here's 5 questions to demonstrate:
 
-![Graph of temperature distributions](images_distribution/170-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/171-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/172-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/173-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/174-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](images_distribution/188-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](images_distribution/189-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](images_distribution/190-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](images_distribution/191-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](images_distribution/193-multi-distribution-v0.5-t=1.0.png)
 
 Generated with code:
 

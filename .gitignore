@@ -1,5 +1,10 @@
 __pycache__
 *.p
 images/
+1d_local
+data
 raw_data
-images_distribution
+test_data*
+local_multi*
+multi_data*
+distribution_data*

@@ -84,6 +84,7 @@ if __name__ == "__main__":
         "incorrect_and_not_changed": []
     }
 
+    not_applicable = []
     errors = []
     table_data = [("idx", "raw", "first", "second")]
     error_idcs = {}
@@ -100,7 +101,14 @@ if __name__ == "__main__":
         except openai.error.Timeout as rte:
             error_idcs[data_i] = f"{rte}"
             continue
+            
+        if data_item is None:
+            assert clean_item is None
+            not_applicable.append(data_i)
+            continue
 
+
+        # print(f"Returning\n{data_item}")
         # print(f"Returning\n{clean_item}")
 
         a = data_item[data_handler.RAW_ANSWER_KEY] or "None"
@@ -150,9 +158,12 @@ if __name__ == "__main__":
     else:
         corrected = 0
 
-    print("Exceptions")
+    if error_idcs:
+        print("Exceptions")
     for k, v in error_idcs.items():
         print(f"{k}: {v}")
+    
+    print(f"Incompatible questions: {len(not_applicable)}")
 
     for row in table_data:
         print("{: >20} {: >20} {: >20} {: >20}".format(*row))

@@ -11,7 +11,10 @@ if __name__ == "__main__":
 
     TEMPERATURE = 1.  # OpenAI default = 1.
     DATA_DIR = f"distribution_data_t{TEMPERATURE}"
-    EXPERIMENT_RANGE = (170, 175)
+    REPEAT_COUNT = 20
+
+    # TODO - find valid indices 
+    EXPERIMENT_IDCS = [188, 189, 190, 191, 193, 195]
 
     data_handler = MultipleChoiceHandler(
         data_dir=DATA_DIR,
@@ -20,7 +23,7 @@ if __name__ == "__main__":
         temperature=TEMPERATURE,
     )
 
-    data_handler.get_data(*EXPERIMENT_RANGE)
+    data_handler.get_data(EXPERIMENT_IDCS[0], EXPERIMENT_IDCS[-1])
 
     if os.path.exists(f"{DATA_DIR}/results.p"):
         with open(f"{DATA_DIR}/results.p", "rb") as f:
@@ -28,7 +31,7 @@ if __name__ == "__main__":
     else:
         results = {}
 
-    for i in range(*EXPERIMENT_RANGE):
+    for i in EXPERIMENT_IDCS:
         if i not in results:
             results[i] = {
                 "correct_and_changed": [],
@@ -44,8 +47,8 @@ if __name__ == "__main__":
     error_count = 0
 
     # TEST: for question, answer in test_qas:
-    for data_i in range(*EXPERIMENT_RANGE):  # range(*experiment_range):
-        while sum([len(lst) for lst in results[data_i].values()]) < 20:
+    for data_i in EXPERIMENT_IDCS:  # range(*experiment_range):
+        while sum([len(lst) for lst in results[data_i].values()]) < REPEAT_COUNT:
 
             # Try except to skip timeouts
             try:
@@ -134,10 +137,10 @@ if __name__ == "__main__":
         plotter(
             result_dict_i,
             filename=os.path.join(
-                os.getcwd(),
-                "images_distribution",
+                DATA_DIR,
                 f"{i}-multi-distribution-v{data_handler.PROMPT_VERSION}-t={TEMPERATURE}.png"
             ),
-            display=False
+            display=False,
+            title=f"Asking GPT-3.5-turbo Are You Sure {REPEAT_COUNT} Times - data_i={i}"
         )
     print(f"ERRORS: {error_count}")

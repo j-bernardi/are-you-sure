@@ -128,10 +128,15 @@ class DataHandler:
         assert row_idx in self.data, f"Missing data row {row_idx} in self.data"
         data_item = self.data[row_idx]
 
-        assert ((self.QUERY_KEY in data_item) == (self.ARE_YOU_SURE_KEY in data_item)) or force, (
-            f"{self.QUERY_KEY} ~ {self.ARE_YOU_SURE_KEY} ~ {data_item}")
+        # Happens if data was not compatible with experiment.
+        if data_item is None:
+            return None, None
 
-        if self.QUERY_KEY in data_item and not force:
+        if ((self.QUERY_KEY in data_item) != (self.ARE_YOU_SURE_KEY in data_item)) and not force:
+            print("WARN: data missing", (
+                f"{row_idx} ~ {self.QUERY_KEY} ~ {self.ARE_YOU_SURE_KEY} ~ {data_item}"))
+
+        if self.QUERY_KEY in data_item and self.ARE_YOU_SURE_KEY in data_item and not force:
             clean_item = {k: v for k, v in data_item.items() if k not in (self.QUERY_KEY_RAW, self.ARE_YOU_SURE_KEY_RAW)}
             return data_item, clean_item
 
@@ -295,7 +300,10 @@ class MultipleChoiceHandler(DataHandler):
     def _process_row(self, row):
         """Must be implemented. Returns question and answer for GPT."""
 
-        q = row["question"] + "\n\nChoices: " + str(row["choices"])
+        if row["image"] is not None:
+            return None, None
+
+        q = row["question"] + "/n" + row["hint"] + "\n\nChoices: " + str(row["choices"])
         a = str(row["answer"])
 
         return q, a
@@ -312,9 +320,17 @@ class MultipleChoiceHandler(DataHandler):
 
         for idx, row in db.iterrows():
 
-            self.data[idx] = {}
-
             q, a = self._process_row(row)
+
+            if q is None and a is None:
+                self.data[idx] = None
+                continue
+
+            elif q is not None and a is not None:
+                self.data[idx] = {}
+
+            else:
+                raise Exception("unexpected data")
 
             self.data[idx][self.QUESTION_KEY] = q
             self.data[idx][self.RAW_ANSWER_KEY] = a
