@@ -26,7 +26,7 @@ This will force a clean load of data and clean queries to GPT-3.5. If you don't 
 
 Results of asking "Are you sure?" after answers to 1000 multiple choice science questions.
 
-![Graph of other things](images/multi-derek-thomas--ScienceQA-0-1000-v0.5.png)
+![Graph of other things](images/derek-thomas--ScienceQA-0-4241-v0.5.png)
 
 Generated with code:
 
@@ -38,11 +38,11 @@ python /Users/jamie/code/are-you-sure/main.py --dataset derek-thomas--ScienceQA 
 
 At temperature = 1, the variance in answers was still quite low, at first glance. Here's 5 questions to demonstrate:
 
-![Graph of temperature distributions](images_distribution/188-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/189-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/190-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/191-multi-distribution-v0.5-t=1.0.png)
-![Graph of temperature distributions](images_distribution/193-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](distribution_data_t1.0/188-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](distribution_data_t1.0/189-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](distribution_data_t1.0/190-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](distribution_data_t1.0/191-multi-distribution-v0.5-t=1.0.png)
+![Graph of temperature distributions](distribution_data_t1.0/193-multi-distribution-v0.5-t=1.0.png)
 
 Generated with code:
 
