@@ -10,7 +10,7 @@ def plotter(results, filename=None, display=True, title=None):
     plt.figure(figsize=(10, 7))
     bars = plt.bar(labels, values, color=['blue', 'green', 'red', 'cyan', 'magenta'])
     plt.ylabel('Number of instances')
-    plt.title(title or 'Results of asking gpt-3.5-turbo "Are you sure?""')
+    plt.title(title or 'Results of asking gpt "Are you sure?""')
     plt.xticks(rotation=30, ha='right')  # Rotate labels for better readability
     plt.tight_layout()  # Adjust spacing for better fit
 

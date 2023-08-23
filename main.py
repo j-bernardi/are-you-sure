@@ -184,5 +184,6 @@ if __name__ == "__main__":
             args.data_dir,
             f"{args.dataset}-{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}-v{data_handler.PROMPT_VERSION}.png"
         ),
-        display=False
+        display=False,
+        title=f"Result of asking {args.model} 'Are you sure?"
     )
