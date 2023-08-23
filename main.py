@@ -33,6 +33,8 @@ def parse_arguments():
 
     parser.add_argument(
         '--clean-answers', action='store_true', help='Enable clean answers.')
+    
+    parser.add_argument('--model', default="gpt-3.5-turbo")
 
     args = parser.parse_args()
 
@@ -71,6 +73,7 @@ if __name__ == "__main__":
         data_config=args.dataset,
         clean=CLEAN_DATA_LOAD,
         temperature=TEMPERATURE,
+        model=args.model,
         **kwargs
     )
 
@@ -178,7 +181,7 @@ if __name__ == "__main__":
         results,
         filename=os.path.join(
             os.getcwd(),
-            "images",
+            args.data_dir,
             f"{args.dataset}-{EXPERIMENT_RANGE[0]}-{EXPERIMENT_RANGE[1]}-v{data_handler.PROMPT_VERSION}.png"
         ),
         display=False

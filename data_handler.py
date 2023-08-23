@@ -6,7 +6,6 @@ import requests
 import pandas as pd
 
 
-MODEL_SELECT = "gpt-3.5-turbo"
 MAX_OUTPUT_TOKENS = 500
 
 
@@ -24,7 +23,7 @@ class DataHandler:
         f"you change your answer or not."
     )
 
-    def __init__(self, data_dir, data_config, clean=False, temperature=0):
+    def __init__(self, data_dir, data_config, clean=False, temperature=0, model="gpt-3.5-turbo"):
         
         # Make directory if need be
         if os.path.exists(data_dir):
@@ -40,6 +39,7 @@ class DataHandler:
         self.data_config = data_config
 
         self.temperature = temperature
+        self.model = model
 
         self._set_keys()
 
@@ -147,9 +147,9 @@ class DataHandler:
             {"role": "user", "content": data_item["question"]}
         ]
 
-        print("Querying", row_idx)
+        print("Querying", row_idx, "with", self.model)
         response = openai.ChatCompletion.create(
-            model=MODEL_SELECT,
+            model=self.model,
             messages=messages,
             max_tokens=MAX_OUTPUT_TOKENS,
             temperature=self.temperature,
@@ -179,7 +179,7 @@ class DataHandler:
             ]
 
             response_2 = openai.ChatCompletion.create(
-                model=MODEL_SELECT,
+                model=self.model,
                 messages=messages,
                 max_tokens=MAX_OUTPUT_TOKENS,
                 temperature=self.temperature,
@@ -231,8 +231,8 @@ class MathHandler(DataHandler):
 
     PATTERN = r"My final answer is therefore that [a-z] [≈=] (-?\d+(\.\d+)?)"
 
-    def __init__(self, data_dir, data_config, dim="1d", clean=False, temperature=0):
-        super().__init__(data_dir, data_config, clean=clean, temperature=temperature)
+    def __init__(self, data_dir, data_config, dim="1d", clean=False, temperature=0, model="gpt-3.5-turbo"):
+        super().__init__(data_dir, data_config, clean=clean, temperature=temperature, model=model)
         self.dim = dim
 
     def _process_row(self, row):
@@ -294,8 +294,8 @@ class MultipleChoiceHandler(DataHandler):
 
     PATTERN = r"my final answer (is )?(\w+)? (\d)"
 
-    def __init__(self, data_dir, data_config, clean=False, temperature=0):
-        super().__init__(data_dir, data_config, clean=clean, temperature=temperature)
+    def __init__(self, data_dir, data_config, clean=False, temperature=0, model="gpt-3.5-turbo"):
+        super().__init__(data_dir, data_config, clean=clean, temperature=temperature, model=model)
 
     def _process_row(self, row):
         """Must be implemented. Returns question and answer for GPT."""
